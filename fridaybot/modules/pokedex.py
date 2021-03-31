@@ -1,4 +1,4 @@
-#    Copyright (C) @chsaiujwal 2020
+#    Copyright (C) @chsaiujwal 2020-2021
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU Affero General Public License as published by
 #    the Free Software Foundation, either version 3 of the License, or
@@ -11,20 +11,27 @@
 #    You should have received a copy of the GNU Affero General Public License
 #    along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-from pokedex import pokedex
+import requests
 
 from fridaybot import CMD_HELP
 from fridaybot.utils import admin_cmd
+from fridaybot.utils import edit_or_reply, friday_on_cmd, sudo_cmd
 
 
-@friday.on(admin_cmd(pattern="pokedex (.*)"))
+@friday.on(friday_on_cmd(pattern="pokedex ?(.*)"))
+@friday.on(sudo_cmd(pattern="pokedex ?(.*)", allow_sudo=True))
 async def _(event):
     if event.fwd_from:
         return
     input_str = event.pattern_match.group(1)
-    pokedx = pokedex.Pokedex()
-    pokemen = pokedx.get_pokemon_by_name(input_str)
-    pokemon = pokemen[0]
+    url = f"https://starkapi.herokuapp.com/pokedex/{input_str}"
+    r = requests.get(url).json()
+    pokemon = r
+    if pokemon.get("error") is not None:
+          kk = f"""
+Error:   {pokemon.get("error")}"""
+          ommhg = await friday.edit_or_reply(event, kk)
+          return
     name = str(pokemon.get("name"))
     number = str(pokemon.get("number"))
     species = str(pokemon.get("species"))

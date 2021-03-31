@@ -1,4 +1,4 @@
-#    Copyright (C) @chsaiujwal 2020
+#    Copyright (C) @chsaiujwal 2020-2021
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU Affero General Public License as published by
 #    the Free Software Foundation, either version 3 of the License, or
@@ -23,7 +23,9 @@ from fridaybot.utils import edit_or_reply, friday_on_cmd, sudo_cmd
 @friday.on(friday_on_cmd(pattern="gps ?(.*)"))
 @friday.on(sudo_cmd(pattern="gps ?(.*)", allow_sudo=True))
 async def gps(event):
-    starkislub = await edit_or_reply(event, "Processing")
+    if event.fwd_from:
+        return
+    starkislub = await friday.edit_or_reply(event, "Processing")
     if event.fwd_from:
         return
     reply_to_id = event.message

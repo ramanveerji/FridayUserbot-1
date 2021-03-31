@@ -1,3 +1,16 @@
+#    Copyright (C) @chsaiujwal 2020-2021
+#    This program is free software: you can redistribute it and/or modify
+#    it under the terms of the GNU Affero General Public License as published by
+#    the Free Software Foundation, either version 3 of the License, or
+#
+#    This program is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU Affero General Public License for more details.
+#
+#    You should have received a copy of the GNU Affero General Public License
+#    along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
 import requests
 try:
   from nltk.corpus import wordnet 
@@ -13,7 +26,7 @@ from fridaybot import CMD_HELP
 @friday.on(friday_on_cmd("meaning (.*)"))	
 @friday.on(sudo_cmd("meaning (.*)", allow_sudo=True))	
 async def _(event):	
-    omg = await edit_or_reply(event, "Finding Meaning.....")	
+    omg = await friday.edit_or_reply(event, "Finding Meaning.....")	
     if event.fwd_from:	
       return	
     input_str = event.pattern_match.group(1)
@@ -53,7 +66,6 @@ CMD_HELP.update(
     {
     "dictionary": "**Dictionary**\
 \n\n**Syntax : **`.meaning <Word>`\
-\n**Usage :** Gives meaning of the word.\
-\n**Example :** `.anime one piece:twist.moe`"
+\n**Usage :** Gives meaning of the word."
     }
 )

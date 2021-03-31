@@ -1,4 +1,4 @@
-#    Copyright (C) Midhun KM 2020
+#    Copyright (C) Midhun KM 2020-2021
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU Affero General Public License as published by
 #    the Free Software Foundation, either version 3 of the License, or
@@ -15,6 +15,7 @@
 import emoji
 from googletrans import Translator
 import requests
+from google_trans_new import google_translator
 from deep_translator import GoogleTranslator
 from googletrans import LANGUAGES
 from langdetect import detect

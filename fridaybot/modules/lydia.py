@@ -1,4 +1,4 @@
-#   Copyright 2019 - 2020 DarkPrinc3
+#   Copyright 2019 - 2020-2021 DarkPrinc3
 
 #   Licensed under the Apache License, Version 2.0 (the "License");
 #   you may not use this file except in compliance with the License.
@@ -14,21 +14,19 @@
 
 import asyncio, coffeehouse
 
-from coffeehouse.api import API
 from coffeehouse.lydia import LydiaAI
 from telethon import events
 from fridaybot.utils import admin_cmd
 from fridaybot import CMD_HELP
-from var import Var
+from fridaybot.Configs import Config
 
 # Non-SQL Mode
 ACC_LYDIA = {}
 SESSION_ID = {}
 
-if Var.LYDIA_API_KEY:
-    api_key = Var.LYDIA_API_KEY
-    api_client = API(api_key)
-    lydia = LydiaAI(api_client)
+if Config.LYDIA_API_KEY:
+    api_key = Config.LYDIA_API_KEY
+    lydia = LydiaAI(api_key)
 
 
 @borg.on(admin_cmd(pattern='rcf$'))

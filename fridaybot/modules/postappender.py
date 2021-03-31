@@ -1,3 +1,16 @@
+#    Copyright (C) Midhun KM 2020-2021
+#    This program is free software: you can redistribute it and/or modify
+#    it under the terms of the GNU Affero General Public License as published by
+#    the Free Software Foundation, either version 3 of the License, or
+#
+#    This program is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU Affero General Public License for more details.
+#
+#    You should have received a copy of the GNU Affero General Public License
+#    along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
 from telethon import events
 
 from fridaybot.modules.sql_helper.PostAppender_sql import (
@@ -13,6 +26,8 @@ lulstark = [".", ",", "!", "'"]
 
 @friday.on(admin_cmd(pattern="spf (.*)"))
 async def mstark(event):
+    if event.fwd_from:
+        return
     await event.edit("`Processing..`")
     lul_id = event.chat_id
     append_text = event.pattern_match.group(1)
@@ -36,6 +51,8 @@ async def mstark(event):
 
 @friday.on(admin_cmd(pattern="sph (.*)"))
 async def _starky(event):
+    if event.fwd_from:
+        return
     await event.edit("`Processing..`")
     lul_id = event.chat_id
     append_text = event.pattern_match.group(1)
@@ -59,6 +76,8 @@ async def _starky(event):
 
 @friday.on(admin_cmd(pattern="rpd$"))
 async def _m(event):
+    if event.fwd_from:
+        return
     await event.edit("`Processing..`")
     id_s = event.chat_id
     if is_data_indbs(id_s):
@@ -86,6 +105,8 @@ async def luli(event):
 
 @friday.on(admin_cmd(pattern="spad$"))
 async def _m(event):
+    if event.fwd_from:
+        return
     await event.edit("`Processing..`")
     id_s = event.chat_id
     if is_data_indbs(id_s):

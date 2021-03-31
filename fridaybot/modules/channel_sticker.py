@@ -1,3 +1,16 @@
+#    Copyright (C) Midhun KM 2020-2021
+#    This program is free software: you can redistribute it and/or modify
+#    it under the terms of the GNU Affero General Public License as published by
+#    the Free Software Foundation, either version 3 of the License, or
+#
+#    This program is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU Affero General Public License for more details.
+#
+#    You should have received a copy of the GNU Affero General Public License
+#    along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
 from telethon import events
 from telethon.utils import pack_bot_file_id
 
@@ -13,6 +26,8 @@ lulstark = [".", ",", "!", "'"]
 
 @friday.on(admin_cmd(pattern="scs$"))
 async def _m(event):
+    if event.fwd_from:
+        return
     await event.edit("`Processing..`")
     id_s = event.chat_id
     lmao = await event.get_reply_message()
@@ -42,6 +57,8 @@ async def _m(event):
 
 @friday.on(admin_cmd(pattern="rcs$"))
 async def _m(event):
+    if event.fwd_from:
+        return
     await event.edit("`Processing..`")
     id_s = event.chat_id
     if is_data_indb(id_s):
@@ -53,6 +70,8 @@ async def _m(event):
 
 @friday.on(admin_cmd(pattern="ccs$"))
 async def _m(event):
+    if event.fwd_from:
+        return
     await event.edit("`Processing..`")
     id_s = event.chat_id
     if is_data_indb(id_s):
@@ -65,6 +84,8 @@ async def _m(event):
 
 @bot.on(events.NewMessage)
 async def lul(event):
+    if event.fwd_from:
+        return
     lsb = event.chat_id
     id_s = event.chat_id
     if is_data_indb(event.chat_id):

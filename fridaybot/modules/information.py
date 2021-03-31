@@ -1,22 +1,41 @@
 import html
-
+from fridaybot.modules.sql_helper.gban_sql import is_gbanned
+from fridaybot.modules.sql_helper.mute_sql import is_muted, mute, unmute
 from telethon.tl.functions.photos import GetUserPhotosRequest
 from telethon.tl.functions.users import GetFullUserRequest
 from telethon.tl.types import MessageEntityMentionName
 from telethon.utils import get_input_location
-
+from telethon.tl.functions.messages import GetCommonChatsRequest
+from telethon.tl.functions.users import GetFullUserRequest
 from fridaybot import CMD_HELP, sclient
 from fridaybot.utils import edit_or_reply, friday_on_cmd, sudo_cmd
 
-
-@friday.on(friday_on_cmd("info ?(.*)"))
-@friday.on(sudo_cmd("info ?(.*)", allow_sudo=True))
+@friday.on(friday_on_cmd("showcc(?: |$)(.*)"))
+async def _(event):
+    user_s, error = await get_full_user(event)
+    if user_s is None:
+        await event.edit("`Something Went Really Wrong !`")
+        return
+    if user_s.common_chats_count == 0:
+        await event.edit("**No Chats in Common !**")
+        return
+    sed = await event.client(GetCommonChatsRequest(user_id=user_s.user.id, max_id=0, limit=100))
+    lol = f"**User-ID :** `{user_s.user.id}` \n**First-Name :** `{user_s.user.first_name}` \n**Total Groups In Common :** `{user_s.common_chats_count}` \n\n"
+    for stark in sed.chats:
+        try:
+            lol += f"**Chat ID :** `{stark.id}` \n**Chat Name :** `{stark.title}` \n**Chat-UserName :** `{stark.username}` \n\n"
+        except:
+            lol += f"**Chat ID :** `{stark.id}` \n**Chat Name :** `{stark.title}` \n\n"
+    await event.edit(lol) 
+    
+@friday.on(friday_on_cmd("info(?: |$)(.*)"))
+@friday.on(sudo_cmd("info(?: |$)(.*)", allow_sudo=True))
 async def _(event):
     if event.fwd_from:
         return
     replied_user, error_i_a = await get_full_user(event)
     if replied_user is None:
-        await edit_or_reply(event, str(error_i_a))
+        await friday.edit_or_reply(event, str(error_i_a))
         return False
     replied_user_profile_photos = await borg(
         GetUserPhotosRequest(
@@ -46,6 +65,14 @@ async def _(event):
         dc_id = "Unknown."
         str(e)
     shazam = replied_user_profile_photos_count
+    if is_gbanned(user_id):
+        is_gbanned_s = f"This User Is Gbanned For Reason : {is_gbanned}"
+    elif not is_gbanned(user_id):
+        is_gbanned_s = False
+    if is_muted(user_id, "gmute"):
+        is_gmutted = "User is Tapped."
+    elif not is_muted(user_id, "gmute"):
+        is_gmutted = False
     caption = f"""<b>INFO<b>
 <b>Telegram ID</b>: <code>{user_id}</code>
 <b>Permanent Link</b>: <a href='tg://user?id={user_id}'>Click Here</a>
@@ -58,6 +85,8 @@ async def _(event):
 <b>VERIFIED</b>: <code>{replied_user.user.verified}</code>
 <b>IS A BOT</b>: <code>{replied_user.user.bot}</code>
 <b>Groups in Common</b>: <code>{common_chats}</code>
+<b>Is Gbanned</b>: <code>{is_gbanned_s}</code>
+<b>Is Gmutted</b>: <code>{is_gmutted}</code>
 """
     message_id_to_reply = event.message.reply_to_msg_id
     if not message_id_to_reply:
@@ -96,7 +125,14 @@ async def get_full_user(event):
             input_str = event.pattern_match.group(1)
         except IndexError as e:
             return None, e
-        if event.message.entities is not None:
+        if event.is_private:
+            try:
+                user_id = event.chat_id
+                replied_user = await event.client(GetFullUserRequest(user_id))
+                return replied_user, None
+            except Exception as e:
+                return None, e
+        elif event.message.entities is not None:
             mention_entity = event.message.entities
             probable_user_mention_entity = mention_entity[0]
             if isinstance(probable_user_mention_entity, MessageEntityMentionName):
@@ -111,13 +147,6 @@ async def get_full_user(event):
                     return replied_user, None
                 except Exception as e:
                     return None, e
-        elif event.is_private:
-            try:
-                user_id = event.chat_id
-                replied_user = await event.client(GetFullUserRequest(user_id))
-                return replied_user, None
-            except Exception as e:
-                return None, e
         else:
             try:
                 user_object = await event.client.get_entity(int(input_str))
